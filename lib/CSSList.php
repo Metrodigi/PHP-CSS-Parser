@@ -107,6 +107,48 @@ abstract class CSSList {
 	}
 
     /**
+     * For all font-face declarations, return an array with the font name as the key
+     * and the src as the value.
+     *
+     * Note: Added specificially for Metrodigi use case.
+     *
+     * @return array
+     */
+    public function retrieveFontNameToSrcMapFromFontFamilies()
+    {
+        $embededFonts = array();
+        foreach($this->getAllRuleSets() as $oRuleSet)
+        {
+            if(($oRuleSet instanceof CSSAtRule) && strtolower($oRuleSet->getType()) == 'font-face')
+            {
+                $fontFamily = "";$fontSrc = "";
+                $fam = $oRuleSet->getRules('font-family');
+                $src = $oRuleSet->getRules('src');
+                if(isset($fam['font-family']))
+                {
+                    $fontFamily = (string) $fam['font-family']->getValue();
+                }
+                if(isset($src['src']))
+                {
+                    $fontSrc = (string) $src['src']->getValue();
+                    //parse out the url
+                    $urlMatches = array();
+                    preg_match_all('/url\([\'"]{1}(.*?)[\'"]{1}\)/', $fontSrc, $urlMatches,PREG_SET_ORDER);
+                    if(isset($urlMatches[0]) && isset($urlMatches[0][1]))
+                    {
+                        $fontSrc = $urlMatches[0][1];
+                    }
+                }
+                if(!empty($fontFamily))
+                {
+                    $embededFonts[$fontFamily] = $fontSrc;
+                }
+            }
+        }
+        return $embededFonts;
+    }
+
+    /**
      * Retrieve a selector by id or name.
      *
      * @param $selector
