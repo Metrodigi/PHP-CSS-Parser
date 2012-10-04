@@ -206,7 +206,38 @@ class CSSDocument extends CSSList {
 	public function getAllSelectors() {
 		return $this->getAllDeclarationBlocks();
 	}
-	
+
+    /**
+     * Return a list of single class selectors
+     *
+     * @return array
+     */
+    public function getSingleClassSelectorList() {
+        $results = array();
+        $blocks = $this->getAllDeclarationBlocks();
+        foreach($blocks as $block)
+        {
+            $selectors = $block->getSelectors();
+
+            foreach($selectors as $sel)
+            {
+                $selctorParts = explode(" ", $sel);
+                if(count($selctorParts) > 1)
+                {
+                    continue;
+                }
+
+                //Only accept class selectors
+                if(preg_match('/^\./', $sel))
+                {
+                    $results[] = (string)$sel;
+                }
+            }
+        }
+        return $results;
+    }
+
+
 	/**
 	* Returns all CSSRuleSet objects found recursively in the tree.
 	*/
