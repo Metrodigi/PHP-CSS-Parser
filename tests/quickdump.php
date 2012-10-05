@@ -1,8 +1,8 @@
 <?php
 
-require_once(dirname(__FILE__).'/bootstrap.php');
+require_once(dirname(__FILE__).'/../CSSParser.php');
 
-$oParser = new Sabberworm\CSS\Parser(file_get_contents('php://stdin'));
+$oParser = new CSSParser(file_get_contents('php://stdin'));
 
 $oDoc = $oParser->parse();
 
