@@ -99,6 +99,13 @@ class CSSParser {
 			$this->consume(';');
 			$this->setCharset($sCharset->getString());
 			return new CSSCharset($sCharset);
+                } else if (in_array($sIdentifier, array('-moz-keyframes', '-webkit-keyframes', '-o-keyframes', '-ms-keyframes', 'keyframes', '-moz-document'))) {
+                        $oResult = new CSSMediaQuery();
+			$oResult->setQuery(trim($this->consumeUntil('{')));
+			$this->consume('{');
+			$this->consumeWhiteSpace();
+			$this->parseList($oResult);
+			return $oResult;
 		} else {
 			//Unknown other at rule (font-face or such)
 			$this->consume('{');
